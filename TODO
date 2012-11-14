@@ -1,0 +1,6 @@
+Al iniciar la app: guardar eventos recibidos en un objeto
+Detectar click en tab mapa
+	-Pintar eventos y vaciar array de eventos
+	-Y hacer un setLocation del sitio actual?
+Utilizar geo para cargar resultados
+Eliminar callback de las peticiones a HotNow --> Averiguar parametro sin json
