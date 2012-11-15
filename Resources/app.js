@@ -19,9 +19,9 @@ app.ui.start();
 Ti.include('controller/timeline.js');
 Ti.include('controller/create.js');
 Ti.include('controller/map.js');
-
-
-
+//When the nameSpaces are created, ui global events start 
+app.ui.startEvents();
+app.core.start();
 
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
 //Titanium.UI.setBackgroundColor('#fff');

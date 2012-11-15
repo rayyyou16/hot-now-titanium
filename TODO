@@ -1,6 +1,23 @@
-Al iniciar la app: guardar eventos recibidos en un objeto
+Evento detalle:
+	-Numero de likes
+	-Comentarios --> estructura personalizada http://nosoloweb.es/filas-personalizadas-para-tableviews-con-titanium/
+	-Mostrar evento en mapa --> trazar ruta?
+	-Comentar
+	-Hacer like
+Hacer sonido cuando hayan nuevo eventos
+Cambiar splashScreen
+Mapa annotation: showEvent opciones:
+	Puntos verdes, click en punto muestra info mas foto en pequeño, click en info mas foto carga evento
+	Foto evento en miniatura, click en foto carga evento
 Detectar click en tab mapa
-	-Pintar eventos y vaciar array de eventos
 	-Y hacer un setLocation del sitio actual?
-Utilizar geo para cargar resultados
-Eliminar callback de las peticiones a HotNow --> Averiguar parametro sin json
+
+*Metodos utilies*
+mapView.removeAllAnnotations
+
+MEJORAS:
+	Event detaill: Poner arriba flechas para ir navegando entre eventos? --> Posible fallo: el button back no muestre timeline
+
+BUG:
+tableView --> Imagenes no cargadas joden scroll hasta que se cargan
+imageView --> Cuando se cambia la horientacion de la tablet los componentes se descuadran

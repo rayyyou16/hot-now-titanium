@@ -7,12 +7,12 @@ app.view.map = {
 		//top : 20,
 		//height : 300,
 		mapType : Titanium.Map.STANDARD_TYPE,
-		location : {
+		/*location : {
 			latitude : 39.402738,
 			longitude : -0.403518,
 			latitudeDelta : 0.5,
 			longitudeDelta : 0.5
-		},
+		},*/
 		animate : true,
 		regionFit : true,
 		userLocation : true

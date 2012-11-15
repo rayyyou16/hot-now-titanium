@@ -1,103 +1,40 @@
 //Testing geolocation
 
 /*Titanium.Geolocation.getCurrentPosition(function(e) {
- if (!e.success || e.error) {
- // manage the error
- alert('geolocation error');
- return;
- }
+if (!e.success || e.error) {
+// manage the error
+alert('geolocation error');
+return;
+}
 
- var longitude = e.coords.longitude;
- var latitude = e.coords.latitude;
- alert('longitude: ' + longitude + ' latitude: ' + latitude );
- //var accuracy = e.coords.accuracy;
+var longitude = e.coords.longitude;
+var latitude = e.coords.latitude;
+alert('longitude: ' + longitude + ' latitude: ' + latitude );
+//var accuracy = e.coords.accuracy;
 
- });*/
+});*/
+//Load events first time
 
-app.core.getCurrentPosition(function(e) {
-
-	var latitude = e.coords.latitude;
-	var longitude = e.coords.longitude;
-
-	//alert('longitude: ' + longitude + ' latitude: ' + latitude );
-	var url = 'http://www.hotnowapp.com/api/v1/q.php?action=find&radius=12000000&lat=' + latitude + '&lng=' + longitude + '&qtyPag=50&callback';
-	//lat=39.402738&lng=-0.403518
-
-	app.core.ajax('GET', url, undefined, function(data) {//Success
-		//alert('success');
-		//console.log(this.responseText);//.responseText
-		//Hide load
-		//app.ui.loading.hide();
-
-		//var data = this.responseText.substring(1);//Remove first (
-		//data = data.substring(0, data.length - 1);//Remove last )
-		//data = JSON.parse(data);
-		//console.log(data.values);
-
-		var values = data.values, rows = new Array(), evento;
-
-		for (var i = 0, len = values.length; i < len; i++) {
-			evento = values[i];
-			rows.push({
-				leftImage : evento.image.s[1],
-				imageBig : evento.image.sb[0],
-				title : evento.title,
-				direction : evento.direction,
-				//hasChild: true,
-				className : 'Pic'
-			});
-			//Ti.API.info(results[i].text);
-		}
-		/*var table = Ti.UI.createTableView({
-		 data : rows
-		 });*/
-		app.view.timeline.tableView.setData(rows);
-
-		app.view.timeline.window.add(app.view.timeline.tableView);
-
-		app.view.timeline.tableView.addEventListener('click', function(e) {
-			var evento = e.rowData,
-			win = Titanium.UI.createWindow({//Event detaill window
-				//url: e.rowData.test,
-				title : evento.title,
-				backgroundColor : '#fff',
-				layout:'vertical' 
-			}),
-			 scrollView = Titanium.UI.createScrollView({//Scroll
-				contentHeight : 'auto',
-				layout:'vertical'
-			}), 
-			tab = app.ui.tabs.activeTab, //Titanium.UI.currentTab;
-			eventPicture = Ti.UI.createImageView({//Picture
-				image : evento.imageBig,
-				top : 20,
-				width : '90%'
-			}),
-			labelDirection = Titanium.UI.createLabel({//Direction
-				top: 20,
-				color:'#000',
-				text: evento.direction.complete,
-				font:{fontSize:20,fontFamily:'Helvetica Neue'},
-				textAlign:'center',
-				width:'auto'
-			});
-
-			//Añadir imagen
-			scrollView.add(eventPicture);
-			//Añadir direction
-			scrollView.add(labelDirection);
-			//Añadir comentarios
-			//Adding scroll
-			win.add(scrollView);
-			tab.open(win, {
-				animated : true
-			});
-			//console.log(this);
-		});
-
-	});
+app.view.timeline.tableView.addEventListener('click', function(e) {//Click in row of timeline -> tableView
+    var evento = e.rowData;
+    
+    if(!evento.loadMore){//If its a row
+        app.core.showEventDetaill(evento);    
+    }else{//If is load more Button
+        app.ui.loading.show();
+        app.core.updateEvents('bottom');
+        //Delete button
+        app.view.timeline.tableView.deleteRow(e.index);
+        //e.row.remove();
+        //evento.remove();
+        //e.source.remove();
+        //app.view.timeline.tableView.deleteRow(1);
+        //app.view.timeline.tableView.deleteRow(2);
+        //app.view.timeline.tableView.deleteRow(3);
+    }
+    
+    //console.log(this);
 });
-
 /*Titanium.Geolocation.addEventListener('location', function(e) {//Fires when the user position changes more than distanceFilter
 if (e.error) {
 // manage the error

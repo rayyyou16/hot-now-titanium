@@ -6,14 +6,14 @@ Logfile initialized
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
 [DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.027000 seconds on emulator to get ready
+[DEBUG] waited 0.022000 seconds on emulator to get ready
 [DEBUG] com.appcelerator.hotnow installed? True
 [INFO] Copying CommonJS modules...
 [INFO] Copying project resources..
-[TRACE] COPYING MODIFIED FILE: C:\titaniumWS\HotNow\Resources\view\map.js => C:\titaniumWS\HotNow\build\android\bin\assets\Resources\view\map.js
+[TRACE] COPYING MODIFIED FILE: C:\titaniumWS\HotNow\Resources\core\core.js => C:\titaniumWS\HotNow\build\android\bin\assets\Resources\core\core.js
 [TRACE] Generating Java Classes
 [DEBUG] Processing Android resource drawables
-[DEBUG] copying app icon: C:\titaniumWS\HotNow\build\android\bin\assets\Resources\appicon.png
+[DEBUG] copying app icon: C:\titaniumWS\HotNow\build\android\bin\assets\Resources\appicon2.png
 [DEBUG] generating theme.xml
 [DEBUG] found drawable-long-land-hdpi splash screen at C:\titaniumWS\HotNow\Resources\android\images\res-long-land-hdpi\default.png
 [DEBUG] copying C:\titaniumWS\HotNow\Resources\android\images\res-long-land-hdpi\default.png splash screen to C:\titaniumWS\HotNow\build\android\res\drawable-long-land-hdpi\background.png
@@ -59,6 +59,8 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/KS_nav_views.png
 [DEBUG] from resource zip => assets/Resources/app.js
 [DEBUG] from resource zip => assets/Resources/appicon.png
+[DEBUG] from resource zip => assets/Resources/appicon2.png
+[DEBUG] from resource zip => assets/Resources/appiconT.png
 [DEBUG] from resource zip => assets/Resources/default.png
 [DEBUG] from resource zip => assets/Resources/test.js
 [DEBUG] from resource zip => assets/app.json
