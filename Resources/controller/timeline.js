@@ -17,13 +17,14 @@ alert('longitude: ' + longitude + ' latitude: ' + latitude );
 
 app.view.timeline.tableView.addEventListener('click', function(e) {//Click in row of timeline -> tableView
     var evento = e.rowData;
+    evento.index = e.index;
     
     if(!evento.loadMore){//If its a row
-        app.core.showEventDetaill(evento);    
+        app.controller.eventDetail.loadEvent(evento);    
     }else{//If is load more Button
         app.ui.loading.show();
         app.core.updateEvents('bottom');
-        //Delete button
+        //D
         app.view.timeline.tableView.deleteRow(e.index);
         //e.row.remove();
         //evento.remove();

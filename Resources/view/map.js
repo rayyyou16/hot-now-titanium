@@ -19,7 +19,7 @@ app.view.map = {
 	}),
 	start : function() {
 		var tab = Titanium.UI.createTab({
-			icon : 'KS_nav_views.png',
+			icon : 'img/map.png',
 			title : 'Map',
 			window : app.view.map.window
 		});

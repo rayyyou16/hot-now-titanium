@@ -1,23 +1,29 @@
+Si no hay resultados --> meter row indicando que cambie el radio*****
+UI:
+	-Cambiar icono tab activo http://developer.appcelerator.com/question/135063/how-to-change-active-tab-icon
+	-Colores APP****
+Sustituir Alerts que no requieran aceptar por Ti.UI.createAlertDialog
+Configuration:
+	-Guardar radio en el movil
+	-Añadir tags
 Evento detalle:
-	-Numero de likes
-	-Comentarios --> estructura personalizada http://nosoloweb.es/filas-personalizadas-para-tableviews-con-titanium/
-	-Mostrar evento en mapa --> trazar ruta?
+	HEADER
+		Numero de comments para rellenar??
+	-Mostrar imagen de google maps***
+	-Mostrar evento en mapa --> trazar ruta?******
 	-Comentar
-	-Hacer like
+		-Elegir avatar
 Hacer sonido cuando hayan nuevo eventos
-Cambiar splashScreen
-Mapa annotation: showEvent opciones:
-	Puntos verdes, click en punto muestra info mas foto en pequeño, click en info mas foto carga evento
-	Foto evento en miniatura, click en foto carga evento
 Detectar click en tab mapa
 	-Y hacer un setLocation del sitio actual?
 
 *Metodos utilies*
-mapView.removeAllAnnotations
 
 MEJORAS:
-	Event detaill: Poner arriba flechas para ir navegando entre eventos? --> Posible fallo: el button back no muestre timeline
 
 BUG:
-tableView --> Imagenes no cargadas joden scroll hasta que se cargan
-imageView --> Cuando se cambia la horientacion de la tablet los componentes se descuadran
+Crear evento --> mientras se esta subiendo la imagen, algunas veces el timeout de updateEvents() oculta el loading
+En el movil no se muestra el icono de recargar captcha??
+
+CONSIDERACIONES:
+	Radio inicial de busqueda: 300km

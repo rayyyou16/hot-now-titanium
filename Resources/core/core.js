@@ -5,7 +5,8 @@ Titanium.Geolocation.distanceFilter = 10;
 // set the granularity of the location event
 
 //Core variables
-app.core.restUrl = 'http://www.hotnowapp.com/api/v1/q.php?callback=&';
+app.core.restUrl = 'http://www.hotnowapp.com/api/v1/q.php';
+app.core.restUrl2 = app.core.restUrl + '?callback=&';
 app.core.events = new Array();
 //Contains new events
 app.core.eventsLoaded = false;
@@ -14,6 +15,8 @@ app.core.updateEventsInterval = 10000;
 app.core.sinceId = 0;
 app.core.maxId = undefined;
 app.core.qtyPag = 30;
+app.core.searchRadius = 300000;
+//Initial radius 300Km
 //Events update interval
 
 //CORE FUNCTIONS
@@ -93,152 +96,6 @@ app.core.getCurrentPosition = function(callback) {
 
     });
 }
-app.core.showEventDetaill = function(evento) {
-
-    //app.ui.loading.show();
-
-    var win = Titanium.UI.createWindow({//Event detaill window
-        //url: e.rowData.test,
-        title : evento.title,
-        backgroundColor : '#fff',
-        layout : 'vertical'
-    }), scrollView = Titanium.UI.createScrollView({//Scroll
-        contentHeight : 'auto',
-        layout : 'vertical'
-    }), //Titanium.UI.currentTab;
-    eventPicture = Ti.UI.createImageView({//Picture
-        image : evento.image.sb[0], //Change imageBig by event.image
-        top : '5%',
-        width : '90%',
-        animating : true,
-        //borderRadius : 10
-        defaultImage : 'http://jimpunk.net/Loading/wp-content/uploads/loading45.gif'
-    }), labelDirection = Titanium.UI.createLabel({//Direction
-        top : 20,
-        color : '#000',
-        text : evento.direction.complete,
-        font : {
-            fontSize : 20,
-            fontFamily : 'Helvetica Neue'
-        },
-        textAlign : 'center',
-        width : 'auto'
-    }), comments = Ti.UI.createTableView({
-        //color: '#000'
-        height : Ti.UI.SIZE,
-        headerTitle : 'Comments'
-    }), urlComments = app.core.restUrl + 'action=comments&id=' + evento.id;
-
-    //alert(urlComments);
-    //Añadir imagen
-    scrollView.add(eventPicture);
-    //Añadir direction
-    scrollView.add(labelDirection);
-    //Añadir comentarios
-    scrollView.add(comments);
-    
-    //Compose
-    //Captcha
-    var captchaWrapper = Ti.UI.createView({
-        layout:'horizontal',
-        height: 90,
-        contentHeight : 'auto'
-    }),
-    captchaImg = Ti.UI.createImageView({
-        top: 20,
-        left: '5%',
-        width: '40%',
-        height: 60,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5
-    }), captchaField = Ti.UI.createTextField({
-        height : 60,
-        top : 20,
-        right : '5%',
-        width : '40%',
-        hintText : 'Captcha value',
-        textAlign : 'center',
-        borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-    }), userField = Ti.UI.createTextField({
-        height : 40,
-        top : 20,
-        right : '5%',
-        width : '90%',
-        hintText : 'Nickname',
-        borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-    }), commentArea = Ti.UI.createTextArea({
-        height: 80,
-        left : '5%',
-        width : '90%',
-        hintText : 'Comment',
-        borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-    }), sendButton = Ti.UI.createButton({
-        title : 'Send event',
-        top : 20,
-        left : '5%',
-        width : '90%'
-    });
-
-    //Adding compose components
-    captchaWrapper.add(captchaImg)
-    captchaWrapper.add(captchaField);
-    //scrollView.add(captchaImg);
-    //scrollView.add(captchaField);
-    scrollView.add(captchaWrapper);
-    scrollView.add(userField);
-    scrollView.add(commentArea);
-    scrollView.add(sendButton);
-    //Adding scroll
-    win.add(scrollView);
-    //Open detaill
-    app.ui.tabs.activeTab.open(win, {
-        animated : true
-    });
-    //Handlers
-    sendButton.addEventListener('click',app.core.sendComment);
-    
-    //Get event comments
-    app.core.ajax('GET', urlComments, undefined, function(data) {//Get event comments
-        commentsData = data.values.comments;
-        var commentRows = new Array();
-        //Comments
-        if (commentsData) {
-            //alert(commentsData);
-            for (var i = 0, len = commentsData.length; i < len; i++) {
-                //Username commentsData[i].avatar
-                commentRows.push({
-                    color : '#000',
-                    leftImage : commentsData[i].avatar,
-                    title : commentsData[i].txt
-                });
-                /*label = Ti.UI.createLabel({
-                 text: commentsData[i].txt
-                 });
-                 win.add(label)*/
-            }
-
-        } else {
-            //html = 'No comments for this event';
-            commentRows.push({
-                color : '#000',
-                textAlign : 'center',
-                title : 'No comments for this event :('
-            });
-        }
-        comments.setData(commentRows);
-        
-        //Compose
-        var captcha = data.values.captcha;
-        captchaImg.setUrl(captcha.urlImage);
-    });
-    //eventPicture.addEventListener('load', function() {
-    //alert('image loaded');
-    //app.ui.loading.hide();
-
-    //});
-
-}
 //Actualiza los eventos cada X tiempo definido en app.core.updateEventsInterval
 //dataPosition --> Indica la posicion donde hay que meter el resultado de los eventos [top|bottom]
 app.core.updateEvents = function(dataPosition) {//
@@ -257,7 +114,7 @@ app.core.updateEvents = function(dataPosition) {//
         var longitude = e.coords.longitude;
 
         //alert('longitude: ' + longitude + ' latitude: ' + latitude );
-        var url = app.core.restUrl + 'action=find&radius=12000000&qtyPag=' + app.core.qtyPag + '&lat=' + latitude + '&lng=' + longitude + searchFilter;
+        var url = app.core.restUrl2 + 'action=find&radius=' + app.core.searchRadius + '&qtyPag=' + app.core.qtyPag + '&lat=' + latitude + '&lng=' + longitude + searchFilter;
         //lat=39.402738&lng=-0.403518
         //alert(url);
         app.core.ajax('GET', url, undefined, function(data) {//Success
@@ -267,23 +124,22 @@ app.core.updateEvents = function(dataPosition) {//
             //app.core.events = values;
 
             if (values) {
-                var evento, rows = new Array(), annotations = new Array(), row;
+                var evento, rows = new Array(), annotations = new Array(), row, rowImg, rowLabel;
 
                 for (var i = 0, len = values.length; i < len; i++) {
                     evento = values[i];
                     //Timeline
-                    row = {
-                        color : '#333',
-                        id : evento.id,
-                        leftImage : evento.image.s[1],
-                        image : evento.image,
+                    row = app.core.createCustomRow(evento.title, evento.direction.complete, evento.image.s[1], {
                         title : evento.title,
-                        direction : evento.direction,
-                        className : 'Pic'
-                    };
+                        qtyLikes : evento.qtyLikes,
+                        id : evento.id,
+                        image : evento.image,
+                        direction : evento.direction
+                    })
                     //Map
                     annotations.push(Titanium.Map.createAnnotation({
                         id : evento.id,
+                        qtyLikes : evento.qtyLikes,
                         latitude : evento.lat,
                         longitude : evento.lng,
                         title : evento.title,
@@ -327,10 +183,10 @@ app.core.updateEvents = function(dataPosition) {//
                 }
 
                 if (!app.core.eventsLoaded) {//Si es la primera vez que se llama la funcion
-                    //Set first value to sinceId
-                    app.core.sinceId = values[0].id;
                     //Setting events loaded
                     app.core.eventsLoaded = true;
+                    //Set first value to sinceId
+                    app.core.sinceId = values[0].id;
                     //Set map loaction
                     app.view.map.mapView.setLocation({
                         latitude : latitude,
@@ -355,8 +211,84 @@ app.core.updateEvents = function(dataPosition) {//
         }, true);
     });
 }
-app.core.sendComment = function(){
-    alert('sendComment');
+app.core.resetEvents = function() {
+    app.core.eventsLoaded = false;
+    app.core.sinceId = 0;
+    app.core.maxId = undefined;
+    app.view.timeline.tableView.setData([]);
+    app.view.map.mapView.removeAllAnnotations();
+}
+app.core.capitalize = function(string) {//Capitalize the First letter
+    
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+app.core.AndroidMenuHandler = function() {
+    Ti.UI.createAlertDialog({
+        title : 'AndroidMenuHandler'
+    }).show();
+}
+app.core.facebookPost = function() {//Post feed in wall of current user
+    app.ui.loading.show();
+    Titanium.Facebook.requestWithGraphPath('me/feed', {
+        message : app.controller.eventDetail.eventTitle,
+        link : 'http://www.hotnowapp.com/share.php?id=' + app.controller.eventDetail.eventId
+    }, "POST", function() {
+        app.ui.loading.hide();
+        app.core.niceAlert('Event shared');
+    });
+}
+app.core.niceAlert = function(title) {
+    Ti.UI.createAlertDialog({
+        title : title
+    }).show();
+}
+app.core.createCustomRow = function(title, detail, image, rowConfig) {
+    if(rowConfig){
+        rowConfig.className = 'Pic';
+    }else{
+        rowConfig = {};
+    }
+    var row = Titanium.UI.createTableViewRow(rowConfig);
+    //Image
+    rowImg = Titanium.UI.createImageView({
+        url : image,
+        height : 70,
+        width: 70,
+        left : 1
+    });
+    //Title
+    rowLabel = Titanium.UI.createLabel({
+        text : app.core.capitalize(title),
+        color : '#333',
+        font : {
+            fontSize : 16,
+            fontWeight : 'bold'
+        },
+        width : 'auto',
+        textAlign : 'left',
+        top : 2,
+        left : 80,
+        height : 20
+    });
+    //Detail
+    rowInfoLabel = Ti.UI.createLabel({
+        color : '#444',
+        textAlign : 'left',
+        text : detail,
+        font : {
+            fontSize : 14
+        },
+        left : 80,
+        height : 20
+    });
+    row.add(rowImg);
+    row.add(rowLabel);
+    row.add(rowInfoLabel);
+    return row;
+}
+app.core.refreshEventsItemHandler = function(){
+    app.ui.loading.show();
+    app.core.updateEvents('top');
 }
 /*
  * Geolocation reverse --> Obtiene el nombre a traves de las coordenadas

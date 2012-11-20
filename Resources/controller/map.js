@@ -34,18 +34,25 @@ app.controller.map = {
 	},
 	//HANDLERS
 	mapClickHandler: function(evt){
-	    //alert(evt);
+	    //alert('mapClickHandler ' + evt.index);
 	    //alert(evt.title);
 	    //alert(evt.annotation.direction);
 		var clickType = evt.clicksource;
 		//alert(clickType);
 		if(clickType == 'title' || clickType == 'rightPane'){//Annotation case
 		    var evento = evt.annotation;
-		    //alert(evento.title);
-		    //alert(evento.direction);
-		    //alert(evento.image);
-		    app.core.showEventDetaill(evento);
+		    //evento.index = evt.index;
+		    //Obtener el index a pelo
+		    var rows = app.view.timeline.tableView.data[0].rows;
+		    
+		    for(var i = 0, len = rows.length; i < len; i++){
+		        if(rows[i].id == evento.id){
+		            evento.index = i;
+		            break;
+		        }
+		    }
 		    //Load event detaill
+		    app.controller.eventDetail.loadEvent(evento);
 		}
 	}
 }

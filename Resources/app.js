@@ -13,16 +13,30 @@ Ti.include('ui/ui.js');
 Ti.include('view/timeline.js');
 Ti.include('view/create.js');
 Ti.include('view/map.js');
+Ti.include('view/eventDetail.js');
+Ti.include('view/configurationWindow.js');
 //Init UI
 app.ui.start();
 //Controllers
 Ti.include('controller/timeline.js');
 Ti.include('controller/create.js');
 Ti.include('controller/map.js');
+Ti.include('controller/eventDetail.js');
+Ti.include('controller/configurationWindow.js');
 //When the nameSpaces are created, ui global events start 
 app.ui.startEvents();
 app.core.start();
 
+setTimeout(function(){
+    //alert(app.view.timeline.tableView.data[0]);
+    //var row = app.view.timeline.tableView.data[0].rows[0];
+    //alert(row.id);
+    //app.controller.eventDetail.loadEvent(row);
+    //row.fireEvent('click');
+    //alert(row.title);
+     
+    //alert(rows[0]);
+},10000);
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
 //Titanium.UI.setBackgroundColor('#fff');
 
