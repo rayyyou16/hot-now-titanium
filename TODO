@@ -1,5 +1,12 @@
+Reload captcha pasar a button
+Create event -> photo preview no se muestra la primera vez; tiene que actualizarse la pantalla o algo para que se muestre
+Upload photo --> Mostrar progressBar, metodo: 'ondatastream'*****
+Mapa:
+	-Aplicar radio
+	-Poder cambiar tipo de mapa (satelite)
 Si no hay resultados --> meter row indicando que cambie el radio*****
 UI:
+	-Colores TabGroup
 	-Cambiar icono tab activo http://developer.appcelerator.com/question/135063/how-to-change-active-tab-icon
 	-Colores APP****
 Sustituir Alerts que no requieran aceptar por Ti.UI.createAlertDialog
@@ -9,8 +16,6 @@ Configuration:
 Evento detalle:
 	HEADER
 		Numero de comments para rellenar??
-	-Mostrar imagen de google maps***
-	-Mostrar evento en mapa --> trazar ruta?******
 	-Comentar
 		-Elegir avatar
 Hacer sonido cuando hayan nuevo eventos

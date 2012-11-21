@@ -6,6 +6,7 @@ app.view.map = {
 	mapView : Titanium.Map.createView({
 		//top : 20,
 		//height : 300,
+		userLocation: true,
 		mapType : Titanium.Map.STANDARD_TYPE,
 		/*location : {
 			latitude : 39.402738,

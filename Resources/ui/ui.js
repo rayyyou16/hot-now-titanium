@@ -1,6 +1,8 @@
 // create tab group
 //Tabs
-app.ui.tabs = Titanium.UI.createTabGroup();
+app.ui.tabs = Titanium.UI.createTabGroup({
+    borderWidth: 0
+});
 //Android Menu items
 app.ui.androidMenu = {
     refreshEventsItem: undefined,

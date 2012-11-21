@@ -1,7 +1,7 @@
 app.controller.create = {
     //Variables
     //La imagen que sera enviada en el POST
-    eventPicture: undefined,
+    eventPicture : undefined,
     //Handler events functions
     selectPictureButtonHandler : function() {
         Titanium.Media.showCamera({
@@ -59,12 +59,43 @@ app.controller.create = {
                 }*/
                 //xhr.open("POST", 'http://www.hotnowapp.com/api/v1/q.php');
                 //xhr.send(data_to_send);
-                app.core.ajax('POST', app.core.restUrl, data_to_send, function(data) {//Success
-                    app.core.niceAlert('Event created');
-                    //Reset create event values
-                    app.view.create.titleEventField.setValue('');
-                    app.view.create.eventPicture.setImage(null);
+               /* var progressbar = Titanium.UI.createProgressBar({
+                    top: 20,
+                    height: 30,
+                    witdh: 300,
+                    color : '#888',
+                    value : 0,
+                    min: 0,
+                    max: 100
                 });
+                app.view.create.scrollView.add(progressbar);
+                progressbar.show();*/
+                app.core.ajax('POST', app.core.restUrl, data_to_send, {
+                    success : function(data) {//Success
+                        app.core.niceAlert('Event created');
+                        //Reset create event values
+                        app.view.create.titleEventField.setValue('');
+                        app.view.create.eventPicture.setImage(null);
+                    }/*,
+                    dataStream: function(e){
+                        app.view.create.titleEventField.setValue(e.progress);
+                        /*var p = Math.round(e.progress);
+                        progressbar.setValue(p);
+                        progressbar.value = p;*/
+                    /*},
+                    sendStream: function(e){
+                        var p = Math.round(e.progress);
+                        progressbar.setValue(p);
+                        progressbar.value = p;
+                        //app.view.create.titleEventField.setValue(p);
+                        //app.view.create.titleEventField.setValue(Math.round(e.progress));//app.view.create.titleEventField + 
+                        //alert('sendStream ' + data);
+                    }*/
+                });
+                /*setTimeout(function(){
+                    progressbar.setValue(50);
+                    progressbar.value = 50;
+                },10000);*/
             });
 
         } else {

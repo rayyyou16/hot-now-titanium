@@ -28,7 +28,7 @@ app.core.start = function() {//Init app function
     setInterval(app.core.updateEvents, app.core.updateEventsInterval, 'top');
     //Carga en busqueda de novedades
 }
-app.core.ajax = function(method, url, params, successCallback, errorCallback, hideLoading) {
+app.core.ajax = function(method, url, params, callbacks, hideLoading) {
     //Show loading
     //setTimeout(function(){
     if (!hideLoading) {
@@ -41,21 +41,18 @@ app.core.ajax = function(method, url, params, successCallback, errorCallback, hi
     //},100);
 
     //Init AJAX
-    var xhr = Ti.Network.createHTTPClient();
-
-    xhr.open(method, url);
+    var xhr = Ti.Network.createHTTPClient();//enableKeepAlive: true
+    
+    //xhr.ondatastream = callbacks.dataStream;
+    //xhr.onsendstream = callbacks.sendStream;
+    
+    
     //+ '&callback'
     //Se añade &callback para evitar que devuelva una cadena en el response de JSONP
     //xhr.setRequestHeader('Content-Type', 'application/json');
 
-    if (params) {//Simplificar solo con xhr.send();
-        params.callback = '';
-        xhr.send(params);
-    } else {
-        xhr.send();
-    }
-
     //xhr.setTimeout(20000);
+    //Callback handlers
     xhr.onload = function(data) {//Success callback
         app.ui.loading.hide();
 
@@ -65,23 +62,23 @@ app.core.ajax = function(method, url, params, successCallback, errorCallback, hi
         //Remove last )
         data = JSON.parse(data);
         //Call callback
-        successCallback(data);
+        callbacks.success(data);
     }
-    xhr.onerror = errorCallback ||
-    function() {//Default errorCallback
+    xhr.onerror = callbacks.error ||
+    function() {//Default error callback
         app.ui.loading.hide();
-        alert('AJAX ERROR');
+        //alert('Request ERROR');
     };
-
-    /*xhr.onload = function(){
-     alert('onload');
-     var data = this.responseText;
-     Ti.API.info(data);
-     eval(this.responseText);
-     //var jdata = JSON.parse(data);
-     //Ti.API.info(jdata);
-     };*/
-
+    
+    xhr.open(method, url);
+    
+    if (params) {//Simplificar solo con xhr.send();
+        params.callback = '';
+        xhr.send(params);
+    } else {
+        xhr.send();
+    }
+    
 }
 app.core.getCurrentPosition = function(callback) {
     Titanium.Geolocation.getCurrentPosition(function(e) {
@@ -117,97 +114,102 @@ app.core.updateEvents = function(dataPosition) {//
         var url = app.core.restUrl2 + 'action=find&radius=' + app.core.searchRadius + '&qtyPag=' + app.core.qtyPag + '&lat=' + latitude + '&lng=' + longitude + searchFilter;
         //lat=39.402738&lng=-0.403518
         //alert(url);
-        app.core.ajax('GET', url, undefined, function(data) {//Success
+        app.core.ajax('GET', url, undefined, {
+            success : function(data) {//Success
 
-            var values = data.values;
+                var values = data.values;
 
-            //app.core.events = values;
+                //app.core.events = values;
 
-            if (values) {
-                var evento, rows = new Array(), annotations = new Array(), row, rowImg, rowLabel;
+                if (values) {
+                    var evento, rows = new Array(), annotations = new Array(), row, rowImg, rowLabel;
 
-                for (var i = 0, len = values.length; i < len; i++) {
-                    evento = values[i];
-                    //Timeline
-                    row = app.core.createCustomRow(evento.title, evento.direction.complete, evento.image.s[1], {
-                        title : evento.title,
-                        qtyLikes : evento.qtyLikes,
-                        id : evento.id,
-                        image : evento.image,
-                        direction : evento.direction
-                    })
-                    //Map
-                    annotations.push(Titanium.Map.createAnnotation({
-                        id : evento.id,
-                        qtyLikes : evento.qtyLikes,
-                        latitude : evento.lat,
-                        longitude : evento.lng,
-                        title : evento.title,
-                        image : evento.image,
-                        direction : evento.direction,
-                        //subtitle : 'Cupertino, CA',//Meter tiempo "Hace 5 minutos"
-                        pincolor : Titanium.Map.ANNOTATION_GREEN,
-                        animate : true,
-                        rightButton : evento.image.s[1]
-                    }));
+                    for (var i = 0, len = values.length; i < len; i++) {
+                        evento = values[i];
+                        //Timeline
+                        row = app.core.createCustomRow(evento.title, evento.direction.complete, evento.image.s[1], {
+                            title : evento.title,
+                            qtyLikes : evento.qtyLikes,
+                            id : evento.id,
+                            image : evento.image,
+                            direction : evento.direction,
+                            lat : evento.lat,
+                            lng : evento.lng
+                        })
+                        //Map
+                        annotations.push(Titanium.Map.createAnnotation({
+                            id : evento.id,
+                            qtyLikes : evento.qtyLikes,
+                            latitude : evento.lat,
+                            longitude : evento.lng,
+                            title : evento.title,
+                            image : evento.image,
+                            direction : evento.direction,
+                            lat : evento.lat,
+                            lng : evento.lng,
+                            //subtitle : 'Cupertino, CA',//Meter tiempo "Hace 5 minutos"
+                            pincolor : Titanium.Map.ANNOTATION_GREEN,
+                            animate : true,
+                            rightButton : evento.image.s[1]
+                        }));
 
-                    if (dataPosition == 'top') {//se mete al principio
-                        app.view.timeline.tableView.insertRowBefore(0, row);
-                    } else {//se guarda y se mete luego con todas
-                        rows.push(row);
+                        if (dataPosition == 'top') {//se mete al principio
+                            app.view.timeline.tableView.insertRowBefore(0, row);
+                        } else {//se guarda y se mete luego con todas
+                            rows.push(row);
+                        }
+
+                    }
+                    //Adding annotations to the map
+                    app.view.map.mapView.addAnnotations(annotations);
+                    if (dataPosition == 'bottom') {//Si hay que meterlo al final
+                        //Adding show more events button
+                        var showMoreButton = Ti.UI.createButton({
+                            title : 'Show more events',
+                            witdh : '100%',
+                            top : 5
+                        }), endRow = Ti.UI.createTableViewRow({
+                            witdh : '100%',
+                            loadMore : true
+                        });
+                        endRow.add(showMoreButton);
+                        rows.push(endRow);
+                        //Adding data
+                        app.view.timeline.tableView.appendRow(rows);
+                        //app.view.timeline.tableView.setData(rows);
+                        //Update maxId
+                        app.core.maxId = values[values.length - 1].id;
+                    } else {
+                        //Update sinceId
+                        app.core.sinceId = values[0].id;
                     }
 
-                }
-                //Adding annotations to the map
-                app.view.map.mapView.addAnnotations(annotations);
-                if (dataPosition == 'bottom') {//Si hay que meterlo al final
-                    //Adding show more events button
-                    var showMoreButton = Ti.UI.createButton({
-                        title : 'Show more events',
-                        witdh : '100%',
-                        top : 5
-                    }), endRow = Ti.UI.createTableViewRow({
-                        witdh : '100%',
-                        loadMore : true
-                    });
-                    endRow.add(showMoreButton);
-                    rows.push(endRow);
-                    //Adding data
-                    app.view.timeline.tableView.appendRow(rows);
-                    //app.view.timeline.tableView.setData(rows);
-                    //Update maxId
-                    app.core.maxId = values[values.length - 1].id;
-                } else {
-                    //Update sinceId
-                    app.core.sinceId = values[0].id;
+                    if (!app.core.eventsLoaded) {//Si es la primera vez que se llama la funcion
+                        //Setting events loaded
+                        app.core.eventsLoaded = true;
+                        //Set first value to sinceId
+                        app.core.sinceId = values[0].id;
+                        //Set map loaction
+                        app.controller.map.location = {
+                            latitude : latitude,
+                            longitude : longitude,
+                            latitudeDelta : 0.5,
+                            longitudeDelta : 0.5
+                        };
+                        app.view.map.mapView.setLocation(app.controller.map.location);
+                    }
                 }
 
-                if (!app.core.eventsLoaded) {//Si es la primera vez que se llama la funcion
-                    //Setting events loaded
-                    app.core.eventsLoaded = true;
-                    //Set first value to sinceId
-                    app.core.sinceId = values[0].id;
-                    //Set map loaction
-                    app.view.map.mapView.setLocation({
-                        latitude : latitude,
-                        longitude : longitude,
-                        latitudeDelta : 0.5,
-                        longitudeDelta : 0.5
-                    });
-                }
+                /*setTimeout(function() {
+                 var row = {
+                 leftImage : 'http://www.vertice360.com/wp-content/themes/vertice360/img/logo_corp_big.png',
+                 title : 'Appended ROW',
+                 className : 'Pic'
+                 };
+                 app.view.timeline.tableView.appendRow([row, row, row]);
+                 app.view.timeline.tableView.insertRowBefore(0, row);
+                 }, 5000);*/
             }
-
-            /*setTimeout(function() {
-             var row = {
-             leftImage : 'http://www.vertice360.com/wp-content/themes/vertice360/img/logo_corp_big.png',
-             title : 'Appended ROW',
-             className : 'Pic'
-             };
-             app.view.timeline.tableView.appendRow([row, row, row]);
-             app.view.timeline.tableView.insertRowBefore(0, row);
-             }, 5000);*/
-        }, function() {//Error
-
         }, true);
     });
 }
@@ -219,7 +221,7 @@ app.core.resetEvents = function() {
     app.view.map.mapView.removeAllAnnotations();
 }
 app.core.capitalize = function(string) {//Capitalize the First letter
-    
+
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 app.core.AndroidMenuHandler = function() {
@@ -243,9 +245,9 @@ app.core.niceAlert = function(title) {
     }).show();
 }
 app.core.createCustomRow = function(title, detail, image, rowConfig) {
-    if(rowConfig){
+    if (rowConfig) {
         rowConfig.className = 'Pic';
-    }else{
+    } else {
         rowConfig = {};
     }
     var row = Titanium.UI.createTableViewRow(rowConfig);
@@ -253,7 +255,7 @@ app.core.createCustomRow = function(title, detail, image, rowConfig) {
     rowImg = Titanium.UI.createImageView({
         url : image,
         height : 70,
-        width: 70,
+        width : 70,
         left : 1
     });
     //Title
@@ -286,7 +288,7 @@ app.core.createCustomRow = function(title, detail, image, rowConfig) {
     row.add(rowInfoLabel);
     return row;
 }
-app.core.refreshEventsItemHandler = function(){
+app.core.refreshEventsItemHandler = function() {
     app.ui.loading.show();
     app.core.updateEvents('top');
 }

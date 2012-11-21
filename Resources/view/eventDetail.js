@@ -30,37 +30,51 @@ app.view.eventDetail = {
         },
         top : 10,
         left : '5%',
-        height : 30,
+        height : 40,
         width : 40
     }),
     likeButton : Ti.UI.createButton({
-        title : 'Vote',
-        height : 35,
+        backgroundImage: '/img/like.png',
+        backgroundSelectedImage: '/img/likeF.png',
+        //title : 'Vote',
+        height : 40,
+        width : 40,
         top : 10,
-        right : 10,
-        width : 100
+        right : 5,
+        left: 5
+        
     }),
-    facebookShare : Ti.UI.createImageView({
-        image : '/img/facebook.png',
-        height : 30,
-        width : 30,
+    facebookShare : Ti.UI.createButton({
+        backgroundImage : '/img/facebook.png',
+        backgroundSelectedImage: '/img/facebookF.png',
+        height : 40,
+        width : 40,
         top : 10,
-        right : 10
+        left: 10,
+        right : 15
+        //borderColor : '#ccc',
+        //borderRadius : 10,
+        //borderWidth : 1
     }),
     //Profile Navigators
     previousProfile: Ti.UI.createButton({
-        title : 'Previous',
-        height : 35,
+        backgroundImage: '/img/prev.png',
+        //backgroundFocusedImage: '/img/prevF.png',
+        backgroundSelectedImage: '/img/prevF.png',
+        //title : 'Previous',
+        height : 40,
         top : 10,
-        right : 10,
-        width : 100
+        right : 15,
+        width : 40
     }),
     nextProfile: Ti.UI.createButton({
-        title : 'Next',
-        height : 35,
+        backgroundImage: '/img/next.png',
+        backgroundFocusedImage: '/img/nextF.png',
+        backgroundSelectedImage: '/img/nextF.png',
+        height : 40,
         top : 10,
-        right : 10,
-        width : 100
+        right : 15,
+        width : 40
     }),
     eventPicture : Ti.UI.createImageView({//Picture
         //image : evento.image.sb[0], //Change imageBig by event.image
@@ -75,7 +89,7 @@ app.view.eventDetail = {
         //defaultImage : 'http://jimpunk.net/Loading/wp-content/uploads/loading45.gif'
     }),
     labelDirection : Titanium.UI.createLabel({//Direction
-        top : 20,
+        top : 10,
         color : '#000',
         //text : evento.direction.complete,
         font : {
@@ -83,10 +97,20 @@ app.view.eventDetail = {
             fontFamily : 'Helvetica Neue'
         },
         textAlign : 'center',
-        width : 'auto'
+        width : 'auto',
+        height : 30
+    }),
+    mapPicture: Ti.UI.createImageView({//Picture
+        top : 10,
+        backgroundColor: '#fff',
+        width : '90%',
+        borderColor : '#ccc',
+        borderRadius : 10,
+        borderWidth : 1
     }),
     comments : Ti.UI.createTableView({
         //color: '#000'
+        top: 10,
         height : Ti.UI.SIZE,
         headerTitle : 'Comments',
         separatorColor : '#ccc'
@@ -124,8 +148,8 @@ app.view.eventDetail = {
         //width : '40%',
         hintText : 'Captcha value',
         textAlign : 'left',
-        borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-        softKeyboardOnFocus : Ti.UI.Android.SOFT_KEYBOARD_HIDE_ON_FOCUS
+        borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+        //softKeyboardOnFocus : Ti.UI.Android.SOFT_KEYBOARD_HIDE_ON_FOCUS
     }),
     userField : Ti.UI.createTextField({
         height : 40,
@@ -168,6 +192,8 @@ app.view.eventDetail = {
         app.view.eventDetail.scrollView.add(app.view.eventDetail.eventPicture);
         //Añadir direction
         app.view.eventDetail.scrollView.add(app.view.eventDetail.labelDirection);
+        //Adding mapImage
+        app.view.eventDetail.scrollView.add(app.view.eventDetail.mapPicture);
         //Añadir comentarios
         app.view.eventDetail.scrollView.add(app.view.eventDetail.comments);
 

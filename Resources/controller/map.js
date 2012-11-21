@@ -1,5 +1,6 @@
 app.controller.map = {
-
+    //The position of the user (updates every minute)
+    location: undefined,
 	paintEvents : function() {//Set the event markers in the map
 
 		//alert('paintEvents');
