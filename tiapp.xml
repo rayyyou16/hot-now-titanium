@@ -37,7 +37,26 @@
             <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
         </orientations>
     </iphone>
-    <android xmlns:android="http://schemas.android.com/apk/res/android"/>
+    <android xmlns:android="http://schemas.android.com/apk/res/android" >
+    	<manifest android:installLocation="preferExternal">
+    		<!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    		<application>
+				<receiver android:name="com.example.MyBroadcastReceiver">  
+				    <intent-filter>  
+				        <action android:name="android.intent.action.BOOT_COMPLETED" />  
+				    </intent-filter>  
+				</receiver>
+			</application>
+    		-->
+			<uses-sdk android:minSdkVersion="7" />
+			<supports-screens android:anyDensity="false"/>
+			
+			
+		</manifest>
+    	<services>
+       		<service type="interval" url="service.js" android:label="UpdateService"/>
+    	</services>
+	</android>
     <mobileweb>
         <precache/>
         <splash>

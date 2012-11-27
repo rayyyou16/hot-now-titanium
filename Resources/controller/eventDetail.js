@@ -36,6 +36,7 @@ app.controller.eventDetail = {
         }
     },
     loadEvent : function(evento) {
+
         var urlComments = app.core.restUrl2 + 'action=comments&id=' + evento.id, coords = evento.lat + ',' + evento.lng, staticMap = 'http://maps.googleapis.com/maps/api/staticmap?center=' + coords + '&zoom=15&size=640x120&sensor=false&markers=' + coords;
 
         app.ui.loading.show();
@@ -60,11 +61,21 @@ app.controller.eventDetail = {
         app.ui.tabs.activeTab.open(app.view.eventDetail.window, {
             animated : true
         });
-
+        //Timeout for captchaField lose focus
+        setTimeout(function() {
+            app.view.eventDetail.captchaField.setSoftKeyboardOnFocus(Titanium.UI.Android.SOFT_KEYBOARD_SHOW_ON_FOCUS);
+            app.view.eventDetail.captchaField.blur();
+            //Scroll window to top
+            app.view.eventDetail.scrollView.scrollTo(0, 0);
+        }, 1000);
         //Get event comments
         app.core.ajax('GET', urlComments, undefined, {
 
             success : function(data) {//Get event comments
+                //Fixing window bug
+                app.view.eventDetail.captchaField.blur();
+                //Scroll window to top
+                app.view.eventDetail.scrollView.scrollTo(0, 0);
                 //Setting index
                 app.controller.eventDetail.eventIndex = evento.index;
 
@@ -93,7 +104,7 @@ app.controller.eventDetail = {
                     commentRows.push({
                         color : '#000',
                         textAlign : 'center',
-                        title : 'No comments for this event :('
+                        title : 'No comments for this event'
                     });
                 }
                 app.view.eventDetail.comments.setData(commentRows);
@@ -127,12 +138,9 @@ app.controller.eventDetail = {
                     if (response.ok == 1) {
                         app.controller.eventDetail.refreshCaptcha(true);
                         //Add the new comment row
-                        var commentRow = {
-                            color : '#333',
-                            leftImage : 'http://hotnowapp.com/img/avatar/1.png',
-                            title : comment,
+                        var commentRow = app.core.createCustomRow(username, comment, 'http://hotnowapp.com/img/avatar/1.png', {
                             className : 'Pic'
-                        };
+                        });
                         app.view.eventDetail.comments.appendRow(commentRow);
                         //Clear fields
                         app.view.eventDetail.userField.setValue('');
@@ -252,10 +260,20 @@ app.controller.eventDetail = {
             app.view.map.mapView.addRoute(app.controller.map.route);
         }
         xhr.send();
+    },
+    eventPictureLoaded : function() {
+        //alert('loaded');
+        app.view.eventDetail.scrollView.updateLayout({
+            top : 0
+        });
+        app.view.eventDetail.captchaField.blur();
+        //Scroll window to top
+        app.view.eventDetail.scrollView.scrollTo(0, 0);
     }
 }
 
 //Handlers
+app.view.eventDetail.eventPicture.addEventListener('load', app.controller.eventDetail.eventPictureLoaded);
 app.view.eventDetail.sendButton.addEventListener('click', app.controller.eventDetail.sendComment);
 app.view.eventDetail.likeButton.addEventListener('click', app.controller.eventDetail.addLike);
 app.view.eventDetail.captchaReloadButton.addEventListener('click', app.controller.eventDetail.refreshCaptcha)

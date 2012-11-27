@@ -1,23 +1,43 @@
 // create tab group
 //Tabs
 app.ui.tabs = Titanium.UI.createTabGroup({
-    borderWidth: 0
+    //backgroundColor: '#fff',
+    //activeTabBackgroundColor: '#fff'
+    activeTabBackgroundSelectedColor: '#fff',
+    activeTabBackgroundFocusedColor: '#fff'
 });
 //Android Menu items
 app.ui.androidMenu = {
-    refreshEventsItem: undefined,
+    refreshEventsItem : undefined,
     configurationItem : undefined
 }
 //UI Global events
 app.ui.startEvents = function() {
     //Tabs events
     app.ui.tabs.addEventListener('click', function(e) {//Click in a tab
+        
 
-        var tabTitle = e.source.title;
+        //var tabTitle = e.source.title;
 
-        if (tabTitle == 'Map') {
-            //app.controller.map.paintEvents();
-        }
+        //app.ui.tabs.getActiveTab().icon = 'img/facebook.png';
+        //alert(tabTitle);
+        //app.ui.tabs.tabs[e.index].icon = 'img/facebook.png';
+        //e.source.setIcon('img/facebook.png');
+        //e.source.icon = 'img/facebook.png';
+        //app.view.create.tab.icon = '../img/facebook.png';
+
+        /*setTimeout(function(){
+         alert('time');
+         //Ti.UI.currentTab.icon = 'img/facebook.png'
+         //app.ui.tabs.getActiveTab().setIcon('../img/facebook.png');
+         //app.view.create.tab.setIcon('/img/facebook.png');
+         //app.ui.tabs.tabs[1].icon = 'img/facebook.png';
+         },5000);
+         //Ti.UI.currentTab.icon = 'img/facebook.png';
+
+         if (tabTitle == 'Map') {
+         //app.controller.map.paintEvents();
+         }*/
     });
 }
 //Loading
@@ -48,7 +68,9 @@ app.ui.start = function() {//Create the UI for the App
 
     app.ui.tabs.open();
 
+    //Android Menu Handlers
     app.view.timeline.window.activity.onCreateOptionsMenu = app.ui.createAndroidMenu;
     app.view.map.window.activity.onCreateOptionsMenu = app.ui.createAndroidMenu;
+
 }
 

@@ -5,12 +5,16 @@ Titanium.Geolocation.distanceFilter = 10;
 // set the granularity of the location event
 
 //Core variables
+app.core.appClosed = false;
+app.core.appDestroyed = false;
+app.core.uploadingEvent = false;
 app.core.restUrl = 'http://www.hotnowapp.com/api/v1/q.php';
 app.core.restUrl2 = app.core.restUrl + '?callback=&';
 app.core.events = new Array();
 //Contains new events
 app.core.eventsLoaded = false;
 app.core.updateEventsInterval = 10000;
+//120000
 //60000 in production
 app.core.sinceId = 0;
 app.core.maxId = undefined;
@@ -25,28 +29,24 @@ app.core.start = function() {//Init app function
     app.core.updateEvents('bottom');
     //Carga inicial de eventos
     //Se actualiza desde aqui y no en el callback de la funcion ajax, por si falla el ajax
-    setInterval(app.core.updateEvents, app.core.updateEventsInterval, 'top');
+    //setInterval(app.core.updateEvents, app.core.updateEventsInterval, 'top');
     //Carga en busqueda de novedades
 }
 app.core.ajax = function(method, url, params, callbacks, hideLoading) {
     //Show loading
-    //setTimeout(function(){
     if (!hideLoading) {
         app.ui.loading.show();
     }
 
-    //Titanium.UI.currentWindow.add(app.ui.loading);
-    //app.view.timeline.window.add(app.ui.loading);
     app.ui.tabs.add(app.ui.loading);
-    //},100);
 
     //Init AJAX
-    var xhr = Ti.Network.createHTTPClient();//enableKeepAlive: true
-    
+    var xhr = Ti.Network.createHTTPClient();
+    //enableKeepAlive: true
+
     //xhr.ondatastream = callbacks.dataStream;
     //xhr.onsendstream = callbacks.sendStream;
-    
-    
+
     //+ '&callback'
     //Se añade &callback para evitar que devuelva una cadena en el response de JSONP
     //xhr.setRequestHeader('Content-Type', 'application/json');
@@ -69,16 +69,16 @@ app.core.ajax = function(method, url, params, callbacks, hideLoading) {
         app.ui.loading.hide();
         //alert('Request ERROR');
     };
-    
+
     xhr.open(method, url);
-    
+
     if (params) {//Simplificar solo con xhr.send();
         params.callback = '';
         xhr.send(params);
     } else {
         xhr.send();
     }
-    
+
 }
 app.core.getCurrentPosition = function(callback) {
     Titanium.Geolocation.getCurrentPosition(function(e) {
@@ -122,9 +122,9 @@ app.core.updateEvents = function(dataPosition) {//
                 //app.core.events = values;
 
                 if (values) {
-                    var evento, rows = new Array(), annotations = new Array(), row, rowImg, rowLabel;
+                    var evento, rows = new Array(), annotations = new Array(), row, rowImg, rowLabel, valuesLength = values.length;
 
-                    for (var i = 0, len = values.length; i < len; i++) {
+                    for (var i = 0; i < valuesLength; i++) {
                         evento = values[i];
                         //Timeline
                         row = app.core.createCustomRow(evento.title, evento.direction.complete, evento.image.s[1], {
@@ -180,8 +180,11 @@ app.core.updateEvents = function(dataPosition) {//
                         //Update maxId
                         app.core.maxId = values[values.length - 1].id;
                     } else {
+                        //Show notification of firts event
+                        var newEvent = values[0];
+                        app.core.statusbarNotification.add('New event near you', newEvent.title, 'New events');
                         //Update sinceId
-                        app.core.sinceId = values[0].id;
+                        app.core.sinceId = newEvent.id;
                     }
 
                     if (!app.core.eventsLoaded) {//Si es la primera vez que se llama la funcion
@@ -197,18 +200,20 @@ app.core.updateEvents = function(dataPosition) {//
                             longitudeDelta : 0.5
                         };
                         app.view.map.mapView.setLocation(app.controller.map.location);
+                        //Start service for updateEvents
+                        app.core.service.start();
+            
                     }
+                } else if (!app.core.eventsLoaded) {//Si no estaban cargados los eventos y no se recibe ningun evento
+                    app.core.eventsLoaded = true;
+                    var row = {
+                        color : '#000',
+                        textAlign : 'center',
+                        title : "Don't have events, please change radius"
+                    };
+                    app.view.timeline.tableView.setData(row);
                 }
 
-                /*setTimeout(function() {
-                 var row = {
-                 leftImage : 'http://www.vertice360.com/wp-content/themes/vertice360/img/logo_corp_big.png',
-                 title : 'Appended ROW',
-                 className : 'Pic'
-                 };
-                 app.view.timeline.tableView.appendRow([row, row, row]);
-                 app.view.timeline.tableView.insertRowBefore(0, row);
-                 }, 5000);*/
             }
         }, true);
     });
@@ -250,6 +255,8 @@ app.core.createCustomRow = function(title, detail, image, rowConfig) {
     } else {
         rowConfig = {};
     }
+    rowConfig.backgroundSelectedColor = '#000';
+    
     var row = Titanium.UI.createTableViewRow(rowConfig);
     //Image
     rowImg = Titanium.UI.createImageView({
@@ -283,6 +290,7 @@ app.core.createCustomRow = function(title, detail, image, rowConfig) {
         left : 80,
         height : 20
     });
+    //Adding elements
     row.add(rowImg);
     row.add(rowLabel);
     row.add(rowInfoLabel);
@@ -291,6 +299,18 @@ app.core.createCustomRow = function(title, detail, image, rowConfig) {
 app.core.refreshEventsItemHandler = function() {
     app.ui.loading.show();
     app.core.updateEvents('top');
+}
+app.core.niceNotification = function(message) {
+    var n = Ti.UI.createNotification({
+        message : message
+    });
+    // Set the duration to either Ti.UI.NOTIFICATION_DURATION_LONG or NOTIFICATION_DURATION_SHORT
+    n.duration = Ti.UI.NOTIFICATION_DURATION_LONG;
+
+    // Setup the X & Y Offsets
+    n.offsetX = 100;
+    n.offsetY = 75;
+    n.show();
 }
 /*
  * Geolocation reverse --> Obtiene el nombre a traves de las coordenadas

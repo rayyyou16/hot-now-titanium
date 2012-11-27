@@ -19,6 +19,12 @@ app.controller.create = {
                 });*/
                 //Set preview image
                 app.view.create.eventPicture.setImage(image);
+                //app.view.create.eventPicture.image = image;
+                //app.view.create.eventPicture.hide();
+                //app.view.create.eventPicture.show();
+                app.view.create.scrollView.updateLayout({
+                    top : 0
+                });
                 //Setting image global value
                 app.controller.create.eventPicture = image;
 
@@ -59,43 +65,63 @@ app.controller.create = {
                 }*/
                 //xhr.open("POST", 'http://www.hotnowapp.com/api/v1/q.php');
                 //xhr.send(data_to_send);
-               /* var progressbar = Titanium.UI.createProgressBar({
-                    top: 20,
-                    height: 30,
-                    witdh: 300,
-                    color : '#888',
-                    value : 0,
-                    min: 0,
-                    max: 100
+                /* var progressbar = Titanium.UI.createProgressBar({
+                top: 20,
+                height: 30,
+                witdh: 300,
+                color : '#888',
+                value : 0,
+                min: 0,
+                max: 100
                 });
                 app.view.create.scrollView.add(progressbar);
                 progressbar.show();*/
-                app.core.ajax('POST', app.core.restUrl, data_to_send, {
-                    success : function(data) {//Success
-                        app.core.niceAlert('Event created');
-                        //Reset create event values
-                        app.view.create.titleEventField.setValue('');
-                        app.view.create.eventPicture.setImage(null);
-                    }/*,
-                    dataStream: function(e){
-                        app.view.create.titleEventField.setValue(e.progress);
-                        /*var p = Math.round(e.progress);
-                        progressbar.setValue(p);
-                        progressbar.value = p;*/
-                    /*},
-                    sendStream: function(e){
-                        var p = Math.round(e.progress);
-                        progressbar.setValue(p);
-                        progressbar.value = p;
-                        //app.view.create.titleEventField.setValue(p);
-                        //app.view.create.titleEventField.setValue(Math.round(e.progress));//app.view.create.titleEventField + 
-                        //alert('sendStream ' + data);
-                    }*/
-                });
+
+                //If not upload event already
+                if (!app.core.uploadingEvent) {
+                    app.core.uploadingEvent = true;
+                    app.core.niceNotification('Uploading event');
+                    //Upload event
+                    app.core.ajax('POST', app.core.restUrl, data_to_send, {
+                        success : function(data) {//Success
+                            //Reset create event values
+                            app.view.create.titleEventField.setValue('');
+                            app.view.create.eventPicture.setImage(null);
+                            app.core.uploadingEvent = false;
+                            app.controller.create.eventPicture = undefined;
+                            //app.core.niceAlert('Event created');
+                            if(!app.core.appDestroyed){
+                                app.core.niceNotification('Event created');    
+                            }
+                            
+                        },
+                        error: function(){
+                            app.core.uploadingEvent = false;
+                        }
+                        /*,
+                         dataStream: function(e){
+                         app.view.create.titleEventField.setValue(e.progress);
+                         /*var p = Math.round(e.progress);
+                         progressbar.setValue(p);
+                         progressbar.value = p;*/
+                        /*},
+                         sendStream: function(e){
+                         var p = Math.round(e.progress);
+                         progressbar.setValue(p);
+                         progressbar.value = p;
+                         //app.view.create.titleEventField.setValue(p);
+                         //app.view.create.titleEventField.setValue(Math.round(e.progress));//app.view.create.titleEventField +
+                         //alert('sendStream ' + data);
+                         }*/
+                    }, true);
+                }else{
+                    alert('You may not post 2 events at the same time');
+                }
+
                 /*setTimeout(function(){
-                    progressbar.setValue(50);
-                    progressbar.value = 50;
-                },10000);*/
+                 progressbar.setValue(50);
+                 progressbar.value = 50;
+                 },10000);*/
             });
 
         } else {

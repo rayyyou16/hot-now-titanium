@@ -14,7 +14,8 @@ app.view.eventDetail = {
     }),
     scrollView : Titanium.UI.createScrollView({//Scroll
         contentHeight : 'auto',
-        layout : 'vertical'
+        layout : 'vertical',
+        softKeyboardOnFocus : Titanium.UI.Android.SOFT_KEYBOARD_HIDE_ON_FOCUS
     }), //Titanium.UI.currentTab;
     likesLabel : Ti.UI.createLabel({
         backgroundColor: '#fff',
@@ -34,19 +35,26 @@ app.view.eventDetail = {
         width : 40
     }),
     likeButton : Ti.UI.createButton({
+        backgroundColor: '#fff',
+        backgroundSelectedColor: '#ccc',
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
         backgroundImage: '/img/like.png',
-        backgroundSelectedImage: '/img/likeF.png',
-        //title : 'Vote',
         height : 40,
         width : 40,
         top : 10,
         right : 5,
-        left: 5
+        left: 10
         
     }),
     facebookShare : Ti.UI.createButton({
+        backgroundColor: '#fff',
+        backgroundSelectedColor: '#ccc',
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
         backgroundImage : '/img/facebook.png',
-        backgroundSelectedImage: '/img/facebookF.png',
         height : 40,
         width : 40,
         top : 10,
@@ -58,9 +66,12 @@ app.view.eventDetail = {
     }),
     //Profile Navigators
     previousProfile: Ti.UI.createButton({
-        backgroundImage: '/img/prev.png',
-        //backgroundFocusedImage: '/img/prevF.png',
-        backgroundSelectedImage: '/img/prevF.png',
+        backgroundColor: '#fff',
+        backgroundSelectedColor: '#ccc',
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        backgroundImage: '/img/prev2.png',
         //title : 'Previous',
         height : 40,
         top : 10,
@@ -68,9 +79,12 @@ app.view.eventDetail = {
         width : 40
     }),
     nextProfile: Ti.UI.createButton({
-        backgroundImage: '/img/next.png',
-        backgroundFocusedImage: '/img/nextF.png',
-        backgroundSelectedImage: '/img/nextF.png',
+        backgroundColor: '#fff',
+        backgroundSelectedColor: '#ccc',
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        backgroundImage: '/img/next2.png',
         height : 40,
         top : 10,
         right : 15,
@@ -85,8 +99,8 @@ app.view.eventDetail = {
         //animating : true,
         borderColor : '#ccc',
         borderRadius : 10,
-        borderWidth : 1
-        //defaultImage : 'http://jimpunk.net/Loading/wp-content/uploads/loading45.gif'
+        borderWidth : 1,
+        defaultImage : '/img/eventPicture.png' 
     }),
     labelDirection : Titanium.UI.createLabel({//Direction
         top : 10,
@@ -136,8 +150,8 @@ app.view.eventDetail = {
         title : 'Reload',
         top : 20,
         height : 75,
-        left : 10,
-        right : 200
+        left : 10
+        //right : 200
         //width : 100
     }),
     captchaField : Ti.UI.createTextField({
@@ -148,8 +162,8 @@ app.view.eventDetail = {
         //width : '40%',
         hintText : 'Captcha value',
         textAlign : 'left',
-        borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-        //softKeyboardOnFocus : Ti.UI.Android.SOFT_KEYBOARD_HIDE_ON_FOCUS
+        borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+        softKeyboardOnFocus : Ti.UI.Android.SOFT_KEYBOARD_HIDE_ON_FOCUS
     }),
     userField : Ti.UI.createTextField({
         height : 40,

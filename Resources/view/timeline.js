@@ -15,7 +15,7 @@ app.view.timeline = {
 
         var tab1 = Titanium.UI.createTab({
             icon : 'img/timeline.png',
-            title : 'Timeline',
+            //title : 'Timeline',
             window : app.view.timeline.window
             //badge: '5'
         });
